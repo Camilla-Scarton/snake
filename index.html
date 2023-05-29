@@ -8,18 +8,41 @@
       rel="shortcut icon"
       href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/24.png"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Snake</title>
   </head>
   <body>
-    <h1>Snake</h1>
-    <p>
-      Instructions: use arrows to control the <span id="snake">snake</span> and
-      eat all the <span id="apple">apples</span>!
-    </p>
-    <div>
-      <canvas id="board"></canvas>
+    <div id="game-container">
+      <h1>Snake</h1>
+      <p>
+        <span>
+          Use arrows to control the <span class="snake">snake</span> and eat all
+          the <span class="apple">apples</span>!
+        </span>
+        <br />
+        <span class="apple"
+          >Apples eaten: <span id="score" class="snake">0</span></span
+        >
+        <br />
+        <span class="snake">
+          Mode: <span id="mode">Don't touch the edges!</span>
+        </span>
+      </p>
+      <div class="btn-container">
+        <button id="edges-kill" class="active" disabled>Dangerous edges</button>
+        <button id="edges-teleport" class="disabled">Tunnel edges</button>
+      </div>
+      <div>
+        <canvas id="board"></canvas>
+      </div>
     </div>
+
     <script src="script.js"></script>
   </body>
 </html>
