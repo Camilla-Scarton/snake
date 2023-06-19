@@ -44,7 +44,7 @@ p {
     font-size: 24px;
 }
 
-.apple, .snake {
+.apple, .blueberry, .fruits, .speed, .score, .snake {
     font-weight: 600;
     color: rgb(26, 124, 26);
 }
@@ -53,11 +53,31 @@ p {
     color: rgb(211, 46, 46);
 }
 
+.blueberry {
+    color: rgb(41, 77, 207);
+}
+
+.fruits {
+    color: rgb(255, 255, 0);
+}
+
+.speed {
+    color: rgb(150, 45, 230);
+}
+
 .btn-container {
     width: 100%;
 }
 
-button {
+#speed-plus {
+    border: 2px solid rgb(150, 45, 230);
+    padding: 0 2px;
+    background: rgb(255, 255, 255);
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-container button {
     margin: 5px 10px;
     padding: 10px;
     color: rgb(191, 186, 186);
@@ -67,11 +87,13 @@ button {
     cursor: pointer; 
 }
 
-button.active {
+.btn-container button.active {
     color: white;
     border: 2px solid white;
     cursor: default;
 }
+
+
 
 @media (max-width: 400px) {
     h1 {
@@ -88,7 +110,7 @@ button.active {
         flex-direction: row;
         justify-content: space-between;
     }
-    button {
+    .btn-container button {
         margin: 0px;
         font-size: 17px;
     }

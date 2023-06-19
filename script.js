@@ -9,17 +9,23 @@ let context;
 
 const game = {
   timerID: null,
+  snakeSpeed: 2, 
   teleport: false,
   over: false,
   score: 0,
+  apple: 0,
+  blueberry: 0,
 };
 
 const $scoreDisplay = document.getElementById("score");
+const $speedDisplay = document.getElementById("speed");
+const $appleDisplay = document.getElementById("apple-count");
+const $blueberryDisplay = document.getElementById("blueberry-count");
 
 const $modeDisplay = document.getElementById("mode");
 
 // game mode setting by buttons
-const $btnMode = document.querySelectorAll("button");
+const $btnMode = document.querySelectorAll("button.mode");
 // audio for mode click
 const modeAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
 $btnMode.forEach((btn) =>
@@ -37,6 +43,16 @@ $btnMode.forEach((btn) =>
   })
 );
 
+const $btnSpeed = document.getElementById("speed-plus");
+$btnSpeed.addEventListener("click", () => {
+  if (game.snakeSpeed == 8) {
+    game.snakeSpeed = 5;
+  } else {
+    game.snakeSpeed++;
+  }
+  $speedDisplay.innerHTML = game.snakeSpeed;
+})
+
 const snake = {
   x: 0,
   y: 0,
@@ -49,6 +65,14 @@ const snake = {
 const appleAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/5259");
 
 const apple = {
+  x: 0,
+  y: 0,
+};
+
+// audio for blueberry eaten
+const blueberryAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/5255");
+
+const blueberry = {
   x: 0,
   y: 0,
 };
@@ -74,6 +98,27 @@ function placeApple() {
   }
 }
 
+// update blueberry position (avoiding snake body)
+function placeBlueberry() {
+  let newX = Math.floor(Math.random() * board.cols) * board.cellSize;
+  let newY = Math.floor(Math.random() * board.rows) * board.cellSize;
+  if (snake.body.length > 1) {
+    let green = false;
+    snake.body.forEach((piece) => {
+      if (piece[0] == newX && piece[1] == newY) green = true;
+    });
+    if (!green) {
+      blueberry.x = newX;
+      blueberry.y = newY;
+    } else {
+      placeBlueberry();
+    }
+  } else {
+    blueberry.x = newX;
+    blueberry.y = newY;
+  }
+}
+
 // change snake direction (avoiding turning back)
 function changeDirection(evt) {
   if (evt.code == "ArrowUp" && snake.speedY != 1) {
@@ -91,6 +136,8 @@ function changeDirection(evt) {
   }
 }
 
+const $startBtn = document.getElementById("start");
+
 window.onload = start();
 
 function start() {
@@ -101,12 +148,17 @@ function start() {
   context = $board.getContext("2d");
   snake.x = board.cellSize * 5;
   snake.y = board.cellSize * 5;
+
   placeApple();
+  placeBlueberry();
   document.addEventListener("keyup", changeDirection);
-  game.timerID = setInterval(update, 1000 / 4);
+  $startBtn.addEventListener("click", () => {
+    game.timerID = setInterval(update, 1000 / game.snakeSpeed);
+  })
 }
 
 function update() {
+  console.log("eeeehiiii")
   if (!game.teleport) {
     // without teleport, edge limit for game over
     if (
@@ -140,13 +192,19 @@ function update() {
     context.fillStyle = "black";
     context.fillRect(0, 0, $board.width, $board.height);
     clearInterval(game.timerID);
-    if (!alert("Game over!")) {
+    if (!alert(`Game over! Your score is ${game.score}!`)) {
       game.over = false;
       snake.speedX = 0;
       snake.speedY = 0;
       snake.body = [];
       game.score = 0;
+      game.apple = 0;
+      game.blueberry = 0;
+      game.snakeSpeed = 5;
       $scoreDisplay.innerHTML = 0;
+      $appleDisplay.innerHTML = 0;
+      $blueberryDisplay.innerHTML = 0;
+      $speedDisplay.innerHTML = 5;
       start();
     }
   }
@@ -159,15 +217,37 @@ function update() {
   context.fillStyle = "red";
   context.fillRect(apple.x, apple.y, board.cellSize, board.cellSize);
 
+  // blueberry creation
+  context.fillStyle = "blue";
+  context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+
   // snake eats apple
   if (snake.x == apple.x && snake.y == apple.y) {
+    context.fillStyle = "black";
+    context.fillRect(apple.x, apple.y, board.cellSize, board.cellSize);
     snake.body.push([apple.x, apple.y]);
-    game.score++;
+    game.apple++;
+    game.score += 5;
     appleAudio.load();
     appleAudio.play();
-    $scoreDisplay.innerHTML = game.score;
+    $appleDisplay.innerHTML = game.apple;
     placeApple();
   }
+
+  // snake eats blueberry
+  if (snake.x == blueberry.x && snake.y == blueberry.y) {
+    context.fillStyle = "black";
+    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+    game.blueberry++;
+    game.score -= game.score > 0 ? 1 : 0;
+    snake.body.pop();
+    blueberryAudio.load();
+    blueberryAudio.play();
+    $blueberryDisplay.innerHTML = game.blueberry;
+    placeBlueberry();
+  }
+
+  $scoreDisplay.innerHTML = game.score;
 
   // body movement
   for (let i = snake.body.length - 1; i > 0; i--) {

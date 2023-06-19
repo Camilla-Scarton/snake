@@ -22,21 +22,32 @@
       <h1>Snake</h1>
       <p>
         <span>
-          Use arrows to control the <span class="snake">snake</span> and eat all
-          the <span class="apple">apples</span>!
+          Use <span class="snake">arrows</span> to control the <span class="snake">snake</span> and eat all
+          the <span class="fruits">fruits</span>!
         </span>
         <br />
-        <span class="apple"
-          >Apples eaten: <span id="score" class="snake">0</span></span
+        <span class="score">Score: <span id="score">0</span></span>
+        <span class="apple">Apples: <span id="apple-count">0</span></span>
+        <span class="blueberry"
+          >Blueberries: <span id="blueberry-count">0</span></span
         >
         <br />
+        <span class="speed"
+          >Speed: <span id="speed" class="speed">5</span></span
+        >
+        <button id="speed-plus" class="speed">+</button>
         <span class="snake">
           Mode: <span id="mode">Don't touch the edges!</span>
         </span>
       </p>
       <div class="btn-container">
-        <button id="edges-kill" class="active" disabled>Dangerous edges</button>
-        <button id="edges-teleport" class="disabled">Tunnel edges</button>
+        <button id="edges-kill" class="mode active" disabled>Dangerous edges</button>
+        <button id="edges-teleport" class="mode disabled">Tunnel edges</button>
+        <div>
+          <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="stop">Stop</button>
+        </div>
       </div>
       <div>
         <canvas id="board"></canvas>
