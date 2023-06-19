@@ -49,7 +49,7 @@ $btnMode.forEach((btn) =>
 
     $modeDisplay.innerHTML = `<span class="bold">${
       game.teleport ? "Pass through" : "Don't touch"
-    }</span> the edges to eat ${game.fruits === 2 ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>` : `all the <span class="red bold">apples</span>`}!`;
+    }</span> the <span class="bold">edges</span> to eat ${game.fruits === 2 ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>` : `all the <span class="red bold">apples</span>`}!`;
   })
 );
 
