@@ -23,7 +23,7 @@
       <div class="instruction">
         <p class="border container">
           <span>
-            Use <span class="green bold">arrows</span> to control the
+            Use <span class="green bold">arrows</span> to move the
             <span class="green bold">snake</span> and eat all the
             <span class="yellow bold">fruits</span>!
           </span>
@@ -32,35 +32,53 @@
           <div>
             <span class="violet bold">Speed: <span id="speed">5</span></span>
             <button id="speed-plus" class="violet">+</button>
-            <button id="edges-kill" class="mode active" disabled>
+            <button id="edges-mode" class="active">Dangerous edges</button>
+            <button id="fruits-mode" class="active">Just apples</button>
+          </div>
+            <!-- <button id="edges-kill" class="mode active" disabled>
               Dangerous edges
             </button>
             <button id="edges-teleport" class="mode disabled">
               Tunnel edges
             </button>
-          </div>
+            <div class="container">
+              <button id="apples-mode" 
+            class="fruits-mode active" disabled>
+              Just apples
+            </button>
+            <button id="apples-and-blueberries-mode" class="fruits-mode disabled">
+              With blueberries
+            </button> 
+            </div> -->
           <div>
             <button id="start">Start</button>
             <button id="pause">Pause</button>
             <button id="stop">Stop</button>
           </div>
+          
         </div>
-        <p class="score container border bold">
-          <span class="green">Score: <span id="score">0</span></span>
+        <div class="container border bold">
+          <p>
+            <span id="edges-mode-display">Don't touch (or Pass through)</span>
+            the edges to eat all the apples<span id="fruits-mode-display">! (or and the blueberries!)</span>
+          </p>
+          <p class="score">
+            <span>Score: <span id="score">0</span></span>
           <span class="red">Apples: <span id="apple-count">0</span></span>
-          <span class="blue"
+          <span class="blue no-blueberry"
             >Blueberries: <span id="blueberry-count">0</span></span
           >
-        </p>
+          </p>
+        </div>
       </div>
       <!-- <p>
-        
         <span class="snake">
           Mode: <span id="mode">Don't touch the edges!</span>
         </span>
       </p> -->
       <div>
-        <canvas class="container" id="board"></canvas>
+        <canvas class="container" id="board">
+        </canvas>
       </div>
     </div>
 
