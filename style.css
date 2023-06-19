@@ -95,7 +95,7 @@ h1 {
 }
 
 .btn-container button {
-    margin: 0px 10px;
+    margin: 0px 5px;
     padding: 10px;
     color: rgb(191, 186, 186);
     border: 2px solid rgb(191, 186, 186);
@@ -106,7 +106,6 @@ h1 {
 .btn-container button.active {
     color: white;
     border: 2px solid white;
-    cursor: default;
 }
 
 p.score {

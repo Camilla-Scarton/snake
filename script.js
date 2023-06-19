@@ -9,8 +9,9 @@ let context;
 
 const game = {
   timerID: null,
-  snakeSpeed: 2, 
+  snakeSpeed: 1, 
   teleport: false,
+  fruits: 1, // 1 for apples | 2 for apples + blueberries
   over: false,
   score: 0,
   apple: 0,
@@ -22,6 +23,8 @@ const $speedDisplay = document.getElementById("speed");
 const $appleDisplay = document.getElementById("apple-count");
 const $blueberryDisplay = document.getElementById("blueberry-count");
 
+const $blueberrySpan = document.querySelector("span.no-blueberry");
+
 const $modeDisplay = document.getElementById("mode");
 
 // game mode setting by buttons
@@ -32,21 +35,28 @@ $btnMode.forEach((btn) =>
   btn.addEventListener("click", () => {
     modeAudio.load();
     modeAudio.play();
-    $btnMode[0].classList.toggle("active");
-    $btnMode[1].classList.toggle("active");
-    $btnMode[0].toggleAttribute("disabled");
-    $btnMode[1].toggleAttribute("disabled");
-    game.teleport = btn.id == "edges-teleport";
-    $modeDisplay.innerHTML = `${
+
+    if (btn.id === "edges-mode") {
+      game.teleport = !game.teleport;
+      btn.innerHTML = `${game.teleport ? "Tunnel edges" : "Dangerous edges"}`;
+    }
+
+    if (btn.id === "fruits-mode") {
+      game.fruits = game.fruits === 1 ? 2 : 1;
+      btn.innerHTML = `${game.fruits === 1 ? "Just apples" : "With blueberries"}`;
+      $blueberrySpan.classList.toggle("no-blueberry");
+    }
+
+    $modeDisplay.innerHTML = `<span class="bold">${
       game.teleport ? "Pass through" : "Don't touch"
-    } the edges!`;
+    }</span> the edges to eat ${game.fruits === 2 ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>` : `all the <span class="red bold">apples</span>`}!`;
   })
 );
 
 const $btnSpeed = document.getElementById("speed-plus");
 $btnSpeed.addEventListener("click", () => {
-  if (game.snakeSpeed == 8) {
-    game.snakeSpeed = 5;
+  if (game.snakeSpeed == 5) {
+    game.snakeSpeed = 1;
   } else {
     game.snakeSpeed++;
   }
@@ -153,7 +163,7 @@ function start() {
   placeBlueberry();
   document.addEventListener("keyup", changeDirection);
   $startBtn.addEventListener("click", () => {
-    game.timerID = setInterval(update, 1000 / game.snakeSpeed);
+    game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
   })
 }
 
@@ -200,11 +210,11 @@ function update() {
       game.score = 0;
       game.apple = 0;
       game.blueberry = 0;
-      game.snakeSpeed = 5;
+      game.snakeSpeed = 1;
       $scoreDisplay.innerHTML = 0;
       $appleDisplay.innerHTML = 0;
       $blueberryDisplay.innerHTML = 0;
-      $speedDisplay.innerHTML = 5;
+      $speedDisplay.innerHTML = 1;
       start();
     }
   }

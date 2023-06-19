@@ -30,10 +30,10 @@
         </p>
         <div class="btn-container container">
           <div>
-            <span class="violet bold">Speed: <span id="speed">5</span></span>
+            <span class="violet bold">Speed: <span id="speed">1</span></span>
             <button id="speed-plus" class="violet">+</button>
-            <button id="edges-mode" class="active">Dangerous edges</button>
-            <button id="fruits-mode" class="active">Just apples</button>
+            <button id="edges-mode" class="mode active">Dangerous edges</button>
+            <button id="fruits-mode" class="mode active">Just apples</button>
           </div>
             <!-- <button id="edges-kill" class="mode active" disabled>
               Dangerous edges
@@ -57,12 +57,16 @@
           </div>
           
         </div>
-        <div class="container border bold">
+        <div class="container border">
           <p>
-            <span id="edges-mode-display">Don't touch (or Pass through)</span>
-            the edges to eat all the apples<span id="fruits-mode-display">! (or and the blueberries!)</span>
+            <span id="mode">
+              <span class="bold">
+              Don't touch
+            </span> the <span class="bold">edges</span> to eat all the <span class="red bold">apples</span>!</span>
+            <!-- <span id="edges-mode-display">Don't touch (or Pass through)</span>
+            the edges to eat all the apples<span id="fruits-mode-display">! (or and the blueberries!)</span> -->
           </p>
-          <p class="score">
+          <p class="score bold">
             <span>Score: <span id="score">0</span></span>
           <span class="red">Apples: <span id="apple-count">0</span></span>
           <span class="blue no-blueberry"
