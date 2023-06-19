@@ -10,13 +10,15 @@
 }
 
 html {
+    min-height: 100vh;
+    min-width: 100vw;
     height: auto;
     width: auto;
 }
 
 body, #game-container {
-    height: 100%;
-    width: 100%;
+    min-height: 100vh;
+    min-width: 100vw;
 }
 
 html {
@@ -67,6 +69,12 @@ h1 {
     border: 5px dotted white;
 }
 
+.col-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
 /* PARTICULAR STYLE */
 
 #speed-plus {
@@ -83,12 +91,11 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    justify-content: space-around;
 }
 
 .btn-container {
     width: 100%;
-    margin: 5px 0;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -96,7 +103,7 @@ h1 {
 
 .btn-container button {
     margin: 0px 5px;
-    padding: 10px;
+    padding: 4px 10px;
     color: rgb(191, 186, 186);
     border: 2px solid rgb(191, 186, 186);
     background: rgb(26, 124, 26);
@@ -108,11 +115,18 @@ h1 {
     border: 2px solid white;
 }
 
-p.score {
+.col {
+    min-width: 150px;
+    padding-top: 30px;
+    margin: 0px 30px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 30px;
+}
+
+.col.score {
+    align-items: flex-start;
 }
 
 .no-blueberry {

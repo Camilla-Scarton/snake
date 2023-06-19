@@ -32,7 +32,7 @@ const $modeDisplay = document.getElementById("mode");
 const $btnMode = document.querySelectorAll("button.mode");
 // audio for mode click
 const modeAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
-$btnMode.forEach((btn) =>
+$btnMode.forEach((btn) => {
   btn.addEventListener("click", () => {
     modeAudio.load();
     modeAudio.play();
@@ -58,7 +58,7 @@ $btnMode.forEach((btn) =>
         : `all the <span class="red bold">apples</span>`
     }!`;
   })
-);
+});
 
 const $btnSpeed = document.getElementById("speed-plus");
 $btnSpeed.addEventListener("click", () => {
@@ -98,45 +98,27 @@ const blueberry = {
   y: 0,
 };
 
-// update apple position (avoiding snake body)
-function placeApple() {
+// place fruit (avoiding snake head and snake body)
+function placeFruit(fruit) {
   let newX = Math.floor(Math.random() * board.cols) * board.cellSize;
   let newY = Math.floor(Math.random() * board.rows) * board.cellSize;
-  if (snake.body.length > 1) {
+  if (snake.x === newX && snake.y === newY) {
+    placeFruit(fruit);
+  } else if (snake.body.length > 1) {
     let green = false;
     snake.body.forEach((piece) => {
-      if (piece[0] == newX && piece[1] == newY) green = true;
+      if (piece[0] === newX && piece[1] === newY) green = true;
     });
     if (!green) {
-      apple.x = newX;
-      apple.y = newY;
+      fruit.x = newX;
+      fruit.y = newY;
+      return;
     } else {
-      placeApple();
+      placeFruit(fruit);
     }
   } else {
-    apple.x = newX;
-    apple.y = newY;
-  }
-}
-
-// update blueberry position (avoiding snake body)
-function placeBlueberry() {
-  let newX = Math.floor(Math.random() * board.cols) * board.cellSize;
-  let newY = Math.floor(Math.random() * board.rows) * board.cellSize;
-  if (snake.body.length > 1) {
-    let green = false;
-    snake.body.forEach((piece) => {
-      if (piece[0] == newX && piece[1] == newY) green = true;
-    });
-    if (!green) {
-      blueberry.x = newX;
-      blueberry.y = newY;
-    } else {
-      placeBlueberry();
-    }
-  } else {
-    blueberry.x = newX;
-    blueberry.y = newY;
+    fruit.x = newX;
+    fruit.y = newY;
   }
 }
 
@@ -159,7 +141,7 @@ function changeDirection(evt) {
 
 const $startBtn = document.getElementById("start");
 const $pauseBtn = document.getElementById("pause");
-const $stopBtn = document.getElementById("stop");
+const $resetBtn = document.getElementById("reset");
 
 window.onload = start();
 
@@ -177,6 +159,10 @@ function start() {
 }
 
 $startBtn.addEventListener("click", () => {
+  $startBtn.classList.add("active");
+  $pauseBtn.classList.remove("active");
+  $resetBtn.classList.remove("active");
+
   if (game.pause) {
     game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
     game.pause = false;
@@ -190,26 +176,33 @@ $startBtn.addEventListener("click", () => {
   });
   snake.x = board.cellSize * 5;
   snake.y = board.cellSize * 5;
-  placeApple();
+  placeFruit(apple);
   if (game.fruits === 1) {
     context.fillStyle = "black";
     context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
   } else {
-    placeBlueberry();
+    placeFruit(blueberry);
   }
   game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
 });
 
 $pauseBtn.addEventListener("click", () => {
-  clearInterval(game.timerID);
-  game.pause = true;
-  $startBtn.removeAttribute("disabled");
+  $pauseBtn.classList.add("active")
+  $startBtn.classList.remove("active");
+  $resetBtn.classList.remove("active");
+  if (game.timerID) {
+    clearInterval(game.timerID);
+    game.pause = true;
+    $startBtn.removeAttribute("disabled");
+  }
 });
 
-$stopBtn.addEventListener("click", () => {
+$resetBtn.addEventListener("click", () => {
+  $resetBtn.classList.add("active");
+  $pauseBtn.classList.remove("active")
+  $startBtn.classList.remove("active");
   context.fillStyle = "black";
   context.fillRect(0, 0, $board.width, $board.height);
-  clearInterval(game.timerID);
   reset();
 });
 
@@ -247,9 +240,7 @@ function update() {
   if (game.over) {
     context.fillStyle = "black";
     context.fillRect(0, 0, $board.width, $board.height);
-    clearInterval(game.timerID);
     if (!alert(`Game over! Your score is ${game.score}!`)) {
-      game.over = false;
       reset();
       start();
     }
@@ -280,7 +271,7 @@ function update() {
     appleAudio.load();
     appleAudio.play();
     $appleDisplay.innerHTML = game.apple;
-    placeApple();
+    placeFruit(apple);
   }
 
   // snake eats blueberry
@@ -299,7 +290,7 @@ function update() {
       blueberryAudio.load();
       blueberryAudio.play();
       $blueberryDisplay.innerHTML = game.blueberry;
-      placeBlueberry();
+      placeFruit(blueberry);
     }
   }
 
@@ -335,6 +326,8 @@ function update() {
 }
 
 function reset() {
+  clearInterval(game.timerID);
+
   snake.speedX = 0;
   snake.speedY = 0;
   snake.body = [];
@@ -347,6 +340,7 @@ function reset() {
   game.snakeSpeed = 1;
   game.fruits = 1;
   game.pause = false;
+  game.over = false;
 
   $scoreDisplay.innerHTML = 0;
   $appleDisplay.innerHTML = 0;
@@ -378,4 +372,8 @@ function reset() {
     btn.removeAttribute("disabled");
   });
   $startBtn.removeAttribute("disabled");
+
+  $startBtn.classList.remove("active");
+  $pauseBtn.classList.remove("active");
+  $resetBtn.classList.remove("active");
 }
