@@ -147,6 +147,8 @@ function changeDirection(evt) {
 }
 
 const $startBtn = document.getElementById("start");
+const $pauseBtn = document.getElementById("pause");
+const $stopBtn = document.getElementById("stop");
 
 window.onload = start();
 
@@ -156,16 +158,33 @@ function start() {
   $board.height = board.rows * board.cellSize;
   $board.width = board.cols * board.cellSize;
   context = $board.getContext("2d");
-  snake.x = board.cellSize * 5;
-  snake.y = board.cellSize * 5;
 
-  placeApple();
-  placeBlueberry();
+  context.fillStyle = "black";
+  context.fillRect(0, 0, $board.width, $board.height);
+
   document.addEventListener("keyup", changeDirection);
-  $startBtn.addEventListener("click", () => {
+}
+
+$startBtn.addEventListener("click", () => {
+    $btnSpeed.setAttribute('disabled', '');
+    $btnMode.forEach((btn) => {
+      btn.setAttribute('disabled', '');
+    })
+    snake.x = board.cellSize * 5;
+    snake.y = board.cellSize * 5;
+    placeApple();
+    if (game.fruits === 1) {
+      context.fillStyle = "black";
+      context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+    } else {
+      placeBlueberry();
+    }
     game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
   })
-}
+
+
+
+
 
 function update() {
   console.log("eeeehiiii")
@@ -228,9 +247,11 @@ function update() {
   context.fillRect(apple.x, apple.y, board.cellSize, board.cellSize);
 
   // blueberry creation
-  context.fillStyle = "blue";
-  context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
-
+  if (game.fruits === 2) {
+    context.fillStyle = "blue";
+    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+  }
+  
   // snake eats apple
   if (snake.x == apple.x && snake.y == apple.y) {
     context.fillStyle = "black";
@@ -245,7 +266,8 @@ function update() {
   }
 
   // snake eats blueberry
-  if (snake.x == blueberry.x && snake.y == blueberry.y) {
+  if (game.fruits === 2) {
+    if (snake.x == blueberry.x && snake.y == blueberry.y) {
     context.fillStyle = "black";
     context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
     game.blueberry++;
@@ -256,6 +278,8 @@ function update() {
     $blueberryDisplay.innerHTML = game.blueberry;
     placeBlueberry();
   }
+  }
+  
 
   $scoreDisplay.innerHTML = game.score;
 

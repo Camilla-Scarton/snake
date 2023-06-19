@@ -118,3 +118,7 @@ p.score {
 .no-blueberry {
     display: none;
 }
+
+button:disabled, #speed-plus:disabled {
+    cursor: default;
+}
