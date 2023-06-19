@@ -207,7 +207,6 @@ $resetBtn.addEventListener("click", () => {
 });
 
 function update() {
-  console.log("eeeehiiii");
   if (!game.teleport) {
     // without teleport, edge limit for game over
     if (
@@ -377,3 +376,33 @@ function reset() {
   $pauseBtn.classList.remove("active");
   $resetBtn.classList.remove("active");
 }
+
+const $favBtn = document.getElementById("fav");
+
+$favBtn.addEventListener("click", () => {
+  game.teleport = true;
+  game.fruits = 2;
+
+  $modeDisplay.innerHTML = `<span class="bold">${
+    game.teleport ? "Pass through" : "Don't touch"
+  }</span> the <span class="bold">edges</span> to eat ${
+    game.fruits === 2
+      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+      : `all the <span class="red bold">apples</span>`
+  }!`;
+
+  $btnMode.forEach((btn) => {
+    if (btn.id === "edges-mode") {
+      btn.innerHTML = "Tunnel edges";
+    }
+
+    if (btn.id === "fruits-mode") {
+      btn.innerHTML = "With blueberries";
+      if ($blueberrySpan.classList.contains("no-blueberry"))
+        $blueberrySpan.classList.remove("no-blueberry");
+    }
+  });
+
+  game.snakeSpeed = 3;
+  $speedDisplay.innerHTML = 3;
+})
