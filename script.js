@@ -9,13 +9,14 @@ let context;
 
 const game = {
   timerID: null,
-  snakeSpeed: 1, 
+  snakeSpeed: 1,
   teleport: false,
   fruits: 1, // 1 for apples | 2 for apples + blueberries
   over: false,
   score: 0,
   apple: 0,
   blueberry: 0,
+  pause: false,
 };
 
 const $scoreDisplay = document.getElementById("score");
@@ -43,25 +44,33 @@ $btnMode.forEach((btn) =>
 
     if (btn.id === "fruits-mode") {
       game.fruits = game.fruits === 1 ? 2 : 1;
-      btn.innerHTML = `${game.fruits === 1 ? "Just apples" : "With blueberries"}`;
+      btn.innerHTML = `${
+        game.fruits === 1 ? "Just apples" : "With blueberries"
+      }`;
       $blueberrySpan.classList.toggle("no-blueberry");
     }
 
     $modeDisplay.innerHTML = `<span class="bold">${
       game.teleport ? "Pass through" : "Don't touch"
-    }</span> the <span class="bold">edges</span> to eat ${game.fruits === 2 ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>` : `all the <span class="red bold">apples</span>`}!`;
+    }</span> the <span class="bold">edges</span> to eat ${
+      game.fruits === 2
+        ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+        : `all the <span class="red bold">apples</span>`
+    }!`;
   })
 );
 
 const $btnSpeed = document.getElementById("speed-plus");
 $btnSpeed.addEventListener("click", () => {
+  modeAudio.load();
+  modeAudio.play();
   if (game.snakeSpeed == 5) {
     game.snakeSpeed = 1;
   } else {
     game.snakeSpeed++;
   }
   $speedDisplay.innerHTML = game.snakeSpeed;
-})
+});
 
 const snake = {
   x: 0,
@@ -80,7 +89,9 @@ const apple = {
 };
 
 // audio for blueberry eaten
-const blueberryAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/5255");
+const blueberryAudio = new Audio(
+  "https://www.fesliyanstudios.com/play-mp3/5255"
+);
 
 const blueberry = {
   x: 0,
@@ -166,28 +177,44 @@ function start() {
 }
 
 $startBtn.addEventListener("click", () => {
-    $btnSpeed.setAttribute('disabled', '');
-    $btnMode.forEach((btn) => {
-      btn.setAttribute('disabled', '');
-    })
-    snake.x = board.cellSize * 5;
-    snake.y = board.cellSize * 5;
-    placeApple();
-    if (game.fruits === 1) {
-      context.fillStyle = "black";
-      context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
-    } else {
-      placeBlueberry();
-    }
+  if (game.pause) {
     game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
-  })
+    game.pause = false;
+    return;
+  }
 
+  $startBtn.setAttribute("disabled", "");
+  $btnSpeed.setAttribute("disabled", "");
+  $btnMode.forEach((btn) => {
+    btn.setAttribute("disabled", "");
+  });
+  snake.x = board.cellSize * 5;
+  snake.y = board.cellSize * 5;
+  placeApple();
+  if (game.fruits === 1) {
+    context.fillStyle = "black";
+    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+  } else {
+    placeBlueberry();
+  }
+  game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
+});
 
+$pauseBtn.addEventListener("click", () => {
+  clearInterval(game.timerID);
+  game.pause = true;
+  $startBtn.removeAttribute("disabled");
+});
 
-
+$stopBtn.addEventListener("click", () => {
+  context.fillStyle = "black";
+  context.fillRect(0, 0, $board.width, $board.height);
+  clearInterval(game.timerID);
+  reset();
+});
 
 function update() {
-  console.log("eeeehiiii")
+  console.log("eeeehiiii");
   if (!game.teleport) {
     // without teleport, edge limit for game over
     if (
@@ -223,19 +250,10 @@ function update() {
     clearInterval(game.timerID);
     if (!alert(`Game over! Your score is ${game.score}!`)) {
       game.over = false;
-      snake.speedX = 0;
-      snake.speedY = 0;
-      snake.body = [];
-      game.score = 0;
-      game.apple = 0;
-      game.blueberry = 0;
-      game.snakeSpeed = 1;
-      $scoreDisplay.innerHTML = 0;
-      $appleDisplay.innerHTML = 0;
-      $blueberryDisplay.innerHTML = 0;
-      $speedDisplay.innerHTML = 1;
+      reset();
       start();
     }
+    return;
   }
 
   // board creation
@@ -251,7 +269,7 @@ function update() {
     context.fillStyle = "blue";
     context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
   }
-  
+
   // snake eats apple
   if (snake.x == apple.x && snake.y == apple.y) {
     context.fillStyle = "black";
@@ -268,18 +286,22 @@ function update() {
   // snake eats blueberry
   if (game.fruits === 2) {
     if (snake.x == blueberry.x && snake.y == blueberry.y) {
-    context.fillStyle = "black";
-    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
-    game.blueberry++;
-    game.score -= game.score > 0 ? 1 : 0;
-    snake.body.pop();
-    blueberryAudio.load();
-    blueberryAudio.play();
-    $blueberryDisplay.innerHTML = game.blueberry;
-    placeBlueberry();
+      context.fillStyle = "black";
+      context.fillRect(
+        blueberry.x,
+        blueberry.y,
+        board.cellSize,
+        board.cellSize
+      );
+      game.blueberry++;
+      game.score -= game.score > 0 ? 1 : 0;
+      snake.body.pop();
+      blueberryAudio.load();
+      blueberryAudio.play();
+      $blueberryDisplay.innerHTML = game.blueberry;
+      placeBlueberry();
+    }
   }
-  }
-  
 
   $scoreDisplay.innerHTML = game.score;
 
@@ -310,4 +332,50 @@ function update() {
       board.cellSize
     );
   }
+}
+
+function reset() {
+  snake.speedX = 0;
+  snake.speedY = 0;
+  snake.body = [];
+
+  game.timerID = null;
+  game.teleport = false;
+  game.score = 0;
+  game.apple = 0;
+  game.blueberry = 0;
+  game.snakeSpeed = 1;
+  game.fruits = 1;
+  game.pause = false;
+
+  $scoreDisplay.innerHTML = 0;
+  $appleDisplay.innerHTML = 0;
+  $blueberryDisplay.innerHTML = 0;
+  $speedDisplay.innerHTML = 1;
+
+  $modeDisplay.innerHTML = `<span class="bold">${
+    game.teleport ? "Pass through" : "Don't touch"
+  }</span> the <span class="bold">edges</span> to eat ${
+    game.fruits === 2
+      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+      : `all the <span class="red bold">apples</span>`
+  }!`;
+
+  $btnMode.forEach((btn) => {
+    if (btn.id === "edges-mode") {
+      btn.innerHTML = "Dangerous edges";
+    }
+
+    if (btn.id === "fruits-mode") {
+      btn.innerHTML = "Just apples";
+      if (!$blueberrySpan.classList.contains("no-blueberry"))
+        $blueberrySpan.classList.add("no-blueberry");
+    }
+  });
+
+  $btnSpeed.removeAttribute("disabled");
+  $btnMode.forEach((btn) => {
+    btn.removeAttribute("disabled");
+  });
+  $startBtn.removeAttribute("disabled");
 }
