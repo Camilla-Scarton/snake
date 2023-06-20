@@ -65,7 +65,7 @@ const $blueberrySpan = document.querySelector("span.no-blueberry");
 
 // Buttons
 const $modeBtns = document.querySelectorAll("button.mode"); // game mode buttons
-const $btnSpeed = document.getElementById("speed-plus");
+const $speedBtn = document.getElementById("speed-plus");
 const $startBtn = document.getElementById("start");
 const $pauseBtn = document.getElementById("pause");
 const $resetBtn = document.getElementById("reset");
@@ -102,7 +102,7 @@ $modeBtns.forEach((btn) => {
   })
 });
 
-$btnSpeed.addEventListener("click", () => {
+$speedBtn.addEventListener("click", () => {
   if (game.snakeSpeed == 5) {
     game.snakeSpeed = 1;
   } else {
@@ -123,7 +123,7 @@ $startBtn.addEventListener("click", () => {
   }
 
   $startBtn.setAttribute("disabled", "");
-  $btnSpeed.setAttribute("disabled", "");
+  $speedBtn.setAttribute("disabled", "");
   $modeBtns.forEach((btn) => {
     btn.setAttribute("disabled", "");
   });
@@ -276,7 +276,7 @@ function reset() {
     }
   });
 
-  $btnSpeed.removeAttribute("disabled");
+  $speedBtn.removeAttribute("disabled");
   $modeBtns.forEach((btn) => {
     btn.removeAttribute("disabled");
   });
