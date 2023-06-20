@@ -21,6 +21,7 @@ const game = {
   apple: 0,
   blueberry: 0,
   pause: false,
+  record: 0,
 };
 
 const snake = {
@@ -62,6 +63,7 @@ const $appleDisplay = document.getElementById("apple-count");
 const $blueberryDisplay = document.getElementById("blueberry-count");
 const $modeDisplay = document.getElementById("mode");
 const $blueberrySpan = document.querySelector("span.no-blueberry");
+const $recordDisplay = document.getElementById("record");
 
 // Buttons
 const $modeBtns = document.querySelectorAll("button.mode"); // game mode buttons
@@ -322,6 +324,8 @@ function update() {
   if (game.over) {
     context.fillStyle = "black";
     context.fillRect(0, 0, $board.width, $board.height);
+    if (game.record < game.score) game.record = game.score;
+    $recordDisplay.innerHTML = game.record;
     if (!alert(`Game over! Your score is ${game.score}!`)) {
       reset();
       start();

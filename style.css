@@ -40,7 +40,7 @@ html {
 }
 
 .red {
-    color: rgb(211, 46, 46);
+    color: rgb(232, 82, 82);
 }
 
 .blue {
@@ -53,6 +53,10 @@ html {
 
 .violet {
     color: rgb(150, 45, 230);
+}
+
+.orange {
+    color: rgb(248, 153, 45);
 }
 
 .container {
