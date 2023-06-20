@@ -1,3 +1,7 @@
+/**
+ * INITIAL STATE & CONSTANTS
+ */
+
 const board = {
   cellSize: 25,
   rows: 20,
@@ -18,53 +22,6 @@ const game = {
   blueberry: 0,
   pause: false,
 };
-
-const $scoreDisplay = document.getElementById("score");
-const $speedDisplay = document.getElementById("speed");
-const $appleDisplay = document.getElementById("apple-count");
-const $blueberryDisplay = document.getElementById("blueberry-count");
-
-const $blueberrySpan = document.querySelector("span.no-blueberry");
-
-const $modeDisplay = document.getElementById("mode");
-
-// game mode setting by buttons
-const $btnMode = document.querySelectorAll("button.mode");
-
-$btnMode.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (btn.id === "edges-mode") {
-      game.teleport = !game.teleport;
-      btn.innerHTML = `${game.teleport ? "Tunnel edges" : "Dangerous edges"}`;
-    }
-
-    if (btn.id === "fruits-mode") {
-      game.fruits = game.fruits === 1 ? 2 : 1;
-      btn.innerHTML = `${
-        game.fruits === 1 ? "Just apples" : "With blueberries"
-      }`;
-      $blueberrySpan.classList.toggle("no-blueberry");
-    }
-
-    $modeDisplay.innerHTML = `<span class="bold">${
-      game.teleport ? "Pass through" : "Don't touch"
-    }</span> the <span class="bold">edges</span> to eat ${
-      game.fruits === 2
-        ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
-        : `all the <span class="red bold">apples</span>`
-    }!`;
-  })
-});
-
-const $btnSpeed = document.getElementById("speed-plus");
-$btnSpeed.addEventListener("click", () => {
-  if (game.snakeSpeed == 5) {
-    game.snakeSpeed = 1;
-  } else {
-    game.snakeSpeed++;
-  }
-  $speedDisplay.innerHTML = game.snakeSpeed;
-});
 
 const snake = {
   x: 0,
@@ -91,6 +48,150 @@ const blueberry = {
   x: 0,
   y: 0,
 };
+
+
+
+/**
+ * DOM
+ */
+
+// To display choices or numbers
+const $scoreDisplay = document.getElementById("score");
+const $speedDisplay = document.getElementById("speed");
+const $appleDisplay = document.getElementById("apple-count");
+const $blueberryDisplay = document.getElementById("blueberry-count");
+const $modeDisplay = document.getElementById("mode");
+const $blueberrySpan = document.querySelector("span.no-blueberry");
+
+// Buttons
+const $modeBtns = document.querySelectorAll("button.mode"); // game mode buttons
+const $btnSpeed = document.getElementById("speed-plus");
+const $startBtn = document.getElementById("start");
+const $pauseBtn = document.getElementById("pause");
+const $resetBtn = document.getElementById("reset");
+const $favBtn = document.getElementById("fav");
+
+
+
+/**
+ * EVENT LISTENERS
+ */
+
+$modeBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (btn.id === "edges-mode") {
+      game.teleport = !game.teleport;
+      btn.innerHTML = `${game.teleport ? "Tunnel edges" : "Dangerous edges"}`;
+    }
+
+    if (btn.id === "fruits-mode") {
+      game.fruits = game.fruits === 1 ? 2 : 1;
+      btn.innerHTML = `${
+        game.fruits === 1 ? "Just apples" : "With blueberries"
+      }`;
+      $blueberrySpan.classList.toggle("no-blueberry");
+    }
+
+    $modeDisplay.innerHTML = `<span class="bold">${
+      game.teleport ? "Pass through" : "Don't touch"
+    }</span> the <span class="bold">edges</span> to eat ${
+      game.fruits === 2
+        ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+        : `all the <span class="red bold">apples</span>`
+    }!`;
+  })
+});
+
+$btnSpeed.addEventListener("click", () => {
+  if (game.snakeSpeed == 5) {
+    game.snakeSpeed = 1;
+  } else {
+    game.snakeSpeed++;
+  }
+  $speedDisplay.innerHTML = game.snakeSpeed;
+});
+
+$startBtn.addEventListener("click", () => {
+  $startBtn.classList.add("active");
+  $pauseBtn.classList.remove("active");
+  $resetBtn.classList.remove("active");
+
+  if (game.pause) {
+    game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
+    game.pause = false;
+    return;
+  }
+
+  $startBtn.setAttribute("disabled", "");
+  $btnSpeed.setAttribute("disabled", "");
+  $modeBtns.forEach((btn) => {
+    btn.setAttribute("disabled", "");
+  });
+  snake.x = board.cellSize * 5;
+  snake.y = board.cellSize * 5;
+  placeFruit(apple);
+  if (game.fruits === 1) {
+    context.fillStyle = "black";
+    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
+  } else {
+    placeFruit(blueberry);
+  }
+  game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
+});
+
+$pauseBtn.addEventListener("click", () => {
+  $pauseBtn.classList.add("active")
+  $startBtn.classList.remove("active");
+  $resetBtn.classList.remove("active");
+  if (game.timerID) {
+    clearInterval(game.timerID);
+    game.pause = true;
+    $startBtn.removeAttribute("disabled");
+  }
+});
+
+$resetBtn.addEventListener("click", () => {
+  $resetBtn.classList.add("active");
+  $pauseBtn.classList.remove("active")
+  $startBtn.classList.remove("active");
+  context.fillStyle = "black";
+  context.fillRect(0, 0, $board.width, $board.height);
+  reset();
+});
+
+$favBtn.addEventListener("click", () => {
+  game.teleport = true;
+  game.fruits = 2;
+
+  $modeDisplay.innerHTML = `<span class="bold">${
+    game.teleport ? "Pass through" : "Don't touch"
+  }</span> the <span class="bold">edges</span> to eat ${
+    game.fruits === 2
+      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+      : `all the <span class="red bold">apples</span>`
+  }!`;
+
+  $modeBtns.forEach((btn) => {
+    if (btn.id === "edges-mode") {
+      btn.innerHTML = "Tunnel edges";
+    }
+
+    if (btn.id === "fruits-mode") {
+      btn.innerHTML = "With blueberries";
+      if ($blueberrySpan.classList.contains("no-blueberry"))
+        $blueberrySpan.classList.remove("no-blueberry");
+    }
+  });
+
+  game.snakeSpeed = 3;
+  $speedDisplay.innerHTML = 3;
+})
+
+
+
+/**
+ * GAME FUNCTIONS
+ */
 
 // place fruit (avoiding snake head and snake body)
 function placeFruit(fruit) {
@@ -133,72 +234,58 @@ function changeDirection(evt) {
   }
 }
 
-const $startBtn = document.getElementById("start");
-const $pauseBtn = document.getElementById("pause");
-const $resetBtn = document.getElementById("reset");
+function reset() {
+  clearInterval(game.timerID);
 
-window.onload = start();
+  snake.speedX = 0;
+  snake.speedY = 0;
+  snake.body = [];
 
-function start() {
-  // board creation
-  $board = document.getElementById("board");
-  $board.height = board.rows * board.cellSize;
-  $board.width = board.cols * board.cellSize;
-  context = $board.getContext("2d");
+  game.timerID = null;
+  game.teleport = false;
+  game.score = 0;
+  game.apple = 0;
+  game.blueberry = 0;
+  game.snakeSpeed = 1;
+  game.fruits = 1;
+  game.pause = false;
+  game.over = false;
 
-  context.fillStyle = "black";
-  context.fillRect(0, 0, $board.width, $board.height);
+  $scoreDisplay.innerHTML = 0;
+  $appleDisplay.innerHTML = 0;
+  $blueberryDisplay.innerHTML = 0;
+  $speedDisplay.innerHTML = 1;
 
-  document.addEventListener("keyup", changeDirection);
-}
+  $modeDisplay.innerHTML = `<span class="bold">${
+    game.teleport ? "Pass through" : "Don't touch"
+  }</span> the <span class="bold">edges</span> to eat ${
+    game.fruits === 2
+      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
+      : `all the <span class="red bold">apples</span>`
+  }!`;
 
-$startBtn.addEventListener("click", () => {
-  $startBtn.classList.add("active");
+  $modeBtns.forEach((btn) => {
+    if (btn.id === "edges-mode") {
+      btn.innerHTML = "Dangerous edges";
+    }
+
+    if (btn.id === "fruits-mode") {
+      btn.innerHTML = "Just apples";
+      if (!$blueberrySpan.classList.contains("no-blueberry"))
+        $blueberrySpan.classList.add("no-blueberry");
+    }
+  });
+
+  $btnSpeed.removeAttribute("disabled");
+  $modeBtns.forEach((btn) => {
+    btn.removeAttribute("disabled");
+  });
+  $startBtn.removeAttribute("disabled");
+
+  $startBtn.classList.remove("active");
   $pauseBtn.classList.remove("active");
   $resetBtn.classList.remove("active");
-
-  if (game.pause) {
-    game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
-    game.pause = false;
-    return;
-  }
-
-  $startBtn.setAttribute("disabled", "");
-  $btnSpeed.setAttribute("disabled", "");
-  $btnMode.forEach((btn) => {
-    btn.setAttribute("disabled", "");
-  });
-  snake.x = board.cellSize * 5;
-  snake.y = board.cellSize * 5;
-  placeFruit(apple);
-  if (game.fruits === 1) {
-    context.fillStyle = "black";
-    context.fillRect(blueberry.x, blueberry.y, board.cellSize, board.cellSize);
-  } else {
-    placeFruit(blueberry);
-  }
-  game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
-});
-
-$pauseBtn.addEventListener("click", () => {
-  $pauseBtn.classList.add("active")
-  $startBtn.classList.remove("active");
-  $resetBtn.classList.remove("active");
-  if (game.timerID) {
-    clearInterval(game.timerID);
-    game.pause = true;
-    $startBtn.removeAttribute("disabled");
-  }
-});
-
-$resetBtn.addEventListener("click", () => {
-  $resetBtn.classList.add("active");
-  $pauseBtn.classList.remove("active")
-  $startBtn.classList.remove("active");
-  context.fillStyle = "black";
-  context.fillRect(0, 0, $board.width, $board.height);
-  reset();
-});
+}
 
 function update() {
   if (!game.teleport) {
@@ -318,85 +405,23 @@ function update() {
   }
 }
 
-function reset() {
-  clearInterval(game.timerID);
 
-  snake.speedX = 0;
-  snake.speedY = 0;
-  snake.body = [];
 
-  game.timerID = null;
-  game.teleport = false;
-  game.score = 0;
-  game.apple = 0;
-  game.blueberry = 0;
-  game.snakeSpeed = 1;
-  game.fruits = 1;
-  game.pause = false;
-  game.over = false;
+/**
+ * ON PAGE LOAD
+ */
 
-  $scoreDisplay.innerHTML = 0;
-  $appleDisplay.innerHTML = 0;
-  $blueberryDisplay.innerHTML = 0;
-  $speedDisplay.innerHTML = 1;
+function start() {
+  // board creation
+  $board = document.getElementById("board");
+  $board.height = board.rows * board.cellSize;
+  $board.width = board.cols * board.cellSize;
+  context = $board.getContext("2d");
 
-  $modeDisplay.innerHTML = `<span class="bold">${
-    game.teleport ? "Pass through" : "Don't touch"
-  }</span> the <span class="bold">edges</span> to eat ${
-    game.fruits === 2
-      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
-      : `all the <span class="red bold">apples</span>`
-  }!`;
+  context.fillStyle = "black";
+  context.fillRect(0, 0, $board.width, $board.height);
 
-  $btnMode.forEach((btn) => {
-    if (btn.id === "edges-mode") {
-      btn.innerHTML = "Dangerous edges";
-    }
-
-    if (btn.id === "fruits-mode") {
-      btn.innerHTML = "Just apples";
-      if (!$blueberrySpan.classList.contains("no-blueberry"))
-        $blueberrySpan.classList.add("no-blueberry");
-    }
-  });
-
-  $btnSpeed.removeAttribute("disabled");
-  $btnMode.forEach((btn) => {
-    btn.removeAttribute("disabled");
-  });
-  $startBtn.removeAttribute("disabled");
-
-  $startBtn.classList.remove("active");
-  $pauseBtn.classList.remove("active");
-  $resetBtn.classList.remove("active");
+  document.addEventListener("keyup", changeDirection);
 }
 
-const $favBtn = document.getElementById("fav");
-
-$favBtn.addEventListener("click", () => {
-  game.teleport = true;
-  game.fruits = 2;
-
-  $modeDisplay.innerHTML = `<span class="bold">${
-    game.teleport ? "Pass through" : "Don't touch"
-  }</span> the <span class="bold">edges</span> to eat ${
-    game.fruits === 2
-      ? `<span class="red bold">apples</span> and <span class="blue bold">blueberries</span>`
-      : `all the <span class="red bold">apples</span>`
-  }!`;
-
-  $btnMode.forEach((btn) => {
-    if (btn.id === "edges-mode") {
-      btn.innerHTML = "Tunnel edges";
-    }
-
-    if (btn.id === "fruits-mode") {
-      btn.innerHTML = "With blueberries";
-      if ($blueberrySpan.classList.contains("no-blueberry"))
-        $blueberrySpan.classList.remove("no-blueberry");
-    }
-  });
-
-  game.snakeSpeed = 3;
-  $speedDisplay.innerHTML = 3;
-})
+window.onload = start();
