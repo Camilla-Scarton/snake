@@ -30,13 +30,9 @@ const $modeDisplay = document.getElementById("mode");
 
 // game mode setting by buttons
 const $btnMode = document.querySelectorAll("button.mode");
-// audio for mode click
-const modeAudio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
+
 $btnMode.forEach((btn) => {
   btn.addEventListener("click", () => {
-    modeAudio.load();
-    modeAudio.play();
-
     if (btn.id === "edges-mode") {
       game.teleport = !game.teleport;
       btn.innerHTML = `${game.teleport ? "Tunnel edges" : "Dangerous edges"}`;
@@ -62,8 +58,6 @@ $btnMode.forEach((btn) => {
 
 const $btnSpeed = document.getElementById("speed-plus");
 $btnSpeed.addEventListener("click", () => {
-  modeAudio.load();
-  modeAudio.play();
   if (game.snakeSpeed == 5) {
     game.snakeSpeed = 1;
   } else {
