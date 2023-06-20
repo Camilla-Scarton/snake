@@ -116,6 +116,8 @@ $startBtn.addEventListener("click", () => {
   $pauseBtn.classList.remove("active");
   $resetBtn.classList.remove("active");
 
+  $pauseBtn.removeAttribute("disabled");
+
   if (game.pause) {
     game.timerID = setInterval(update, 1000 / (game.snakeSpeed + 2));
     game.pause = false;
@@ -422,6 +424,7 @@ function start() {
   context.fillRect(0, 0, $board.width, $board.height);
 
   document.addEventListener("keyup", changeDirection);
+  $pauseBtn.setAttribute("disabled", "");
 }
 
 window.onload = start();
