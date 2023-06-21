@@ -303,11 +303,11 @@ function update() {
       game.over = true;
     }
   } else {
-    if (snake.y == 0 && snake.speedY == -1) {
+    if (snake.y < 0 && snake.speedY == -1) {
       snake.y = board.rows * board.cellSize;
     } else if (snake.y == board.rows * board.cellSize && snake.speedY == 1) {
       snake.y = 0;
-    } else if (snake.x == 0 && snake.speedX == -1) {
+    } else if (snake.x < 0 && snake.speedX == -1) {
       snake.x = board.cols * board.cellSize;
     } else if (snake.x == board.cols * board.cellSize && snake.speedX == 1) {
       snake.x = 0;
