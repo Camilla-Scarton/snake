@@ -1,6 +1,7 @@
 # Snake Game
 
 - Video inspo: https://www.youtube.com/watch?v=baBq5GAL0_U
+- Game inspo: https://archive.org/details/snaked3_ALL_130373 (I used to play it as a child in my mum's mobile phone \*-\*)
 
 ## Memo audio on buttons clicked and fruits eaten
 
